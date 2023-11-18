@@ -8,6 +8,19 @@ class App extends Component {
     contacts: [],
     filter: '',
   };
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const contactsParsed = JSON.parse(contacts);
+    if (contactsParsed) {
+      this.setState({ contacts: contactsParsed });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
   isIncludeContact = name => {
     return this.state.contacts.find(
       el => el.name.toLocaleLowerCase() === name.toLocaleLowerCase()
@@ -33,15 +46,9 @@ class App extends Component {
   };
   createRenderListContact = () => {
     const { contacts, filter } = this.state;
-    let toRender;
-    if (filter.length !== 0) {
-      toRender = contacts.filter(el =>
-        el.name.toLowerCase().includes(filter.toLowerCase())
-      );
-    } else {
-      toRender = contacts;
-    }
-    return toRender;
+    return contacts.filter(el =>
+      el.name.toLowerCase().includes(filter.toLowerCase())
+    );
   };
   render() {
     return (
